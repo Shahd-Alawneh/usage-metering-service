@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Usage Metering Dashboard</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 850px; margin: 35px auto; padding: 0 18px; background: #f5f7fb; color: #172033; }
+    h1 { margin-bottom: 6px; }
+    .muted { color: #586174; }
+    section { background: white; border: 1px solid #dce2ec; border-radius: 12px; padding: 18px; margin: 18px 0; }
+    input, button { font: inherit; padding: 10px; margin: 5px 0; box-sizing: border-box; }
+    input { width: 100%; border: 1px solid #c8d0dd; border-radius: 6px; }
+    button { border: 0; border-radius: 6px; background: #173b70; color: white; cursor: pointer; }
+    button:hover { background: #24518f; }
+    pre { background: #101827; color: #e7edf7; padding: 12px; overflow-wrap: anywhere; white-space: pre-wrap; border-radius: 8px; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    @media (max-width: 650px) { .grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <h1>Usage Metering Dashboard</h1>
+  <p class="muted">Create accounts and users, submit usage requests, and inspect usage history.</p>
+
+  <section>
+    <h2>1. Create an account</h2>
+    <label>Account name<input id="accountName" value="Demo Company"></label>
+    <button id="createAccount">Create account</button>
+    <p class="muted">The API key is shown only in this response. Save it securely.</p>
+    <pre id="accountResult">No account created yet.</pre>
+  </section>
+
+  <section>
+    <h2>2. Account credentials</h2>
+    <label>API key<input id="apiKey" type="password" placeholder="Paste your account API key"></label>
+    <label>User ID<input id="userId" placeholder="Create a user below or enter an existing user UUID"></label>
+    <button id="showKey">Show / hide API key</button>
+    <hr>
+    <h3>Create a user</h3>
+    <label>User name<input id="userName" value="Demo User"></label>
+    <button id="createUser">Create user</button>
+    <pre id="userResult">User creation result will appear here.</pre>
+  </section>
+
+  <section>
+    <h2>3. Submit usage</h2>
+    <label>Request ID<input id="requestId" placeholder="e.g. request-001"></label>
+    <label>Units<input id="units" type="number" min="1" value="10"></label>
+    <button id="consume">Submit usage</button>
+    <pre id="usageResult">Usage response will appear here.</pre>
+  </section>
+
+  <section>
+    <h2>4. Usage history</h2>
+    <div class="grid">
+      <label>Page<input id="page" type="number" min="1" value="1"></label>
+      <label>Items per page (max 100)<input id="limit" type="number" min="1" max="100" value="10"></label>
+      <label>Month (optional, YYYY-MM)<input id="month" placeholder="2026-10"></label>
+      <label>User ID filter (optional)<input id="historyUserId" placeholder="User UUID"></label>
+    </div>
+    <button id="loadHistory">Load history</button>
+    <pre id="historyResult">History will appear here.</pre>
+  </section>
+
+  <script>
+    const el = (id) => document.getElementById(id);
+    const show = (id, value) => { el(id).textContent = JSON.stringify(value, null, 2); };
+
+    async function api(path, options = {}) {
+      const headers = { ...(options.headers || {}) };
+      if (options.body) headers["Content-Type"] = "application/json";
+      if (el("apiKey").value.trim()) headers["x-api-key"] = el("apiKey").value.trim();
+
+      const response = await fetch(path, { ...options, headers });
+      const text = await response.text();
+      let data;
+      try { data = JSON.parse(text); } catch { data = { response: text }; }
+      if (!response.ok) throw new Error(JSON.stringify({ status: response.status, ...data }));
+      return data;
+    }
+
+    el("createAccount").onclick = async () => {
+      try {
+        const response = await fetch("/accounts", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name: el("accountName").value })
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(JSON.stringify(data));
+        el("apiKey").value = data.apiKey;
+        show("accountResult", data);
+      } catch (error) { show("accountResult", { error: error.message }); }
+    };
+
+    el("showKey").onclick = () => {
+      el("apiKey").type = el("apiKey").type === "password" ? "text" : "password";
+    };
+
+    el("createUser").onclick = async () => {
+      try {
+        const data = await api("/users", {
+          method: "POST",
+          body: JSON.stringify({ name: el("userName").value })
+        });
+        el("userId").value = data.user.id;
+        el("historyUserId").value = data.user.id;
+        show("userResult", data);
+      } catch (error) { show("userResult", { error: error.message }); }
+    };
+
+    el("consume").onclick = async () => {
+      try {
+        const data = await api("/usage", {
+          method: "POST",
+          body: JSON.stringify({
+            userId: el("userId").value.trim(),
+            requestId: el("requestId").value.trim(),
+            units: Number(el("units").value)
+          })
+        });
+        show("usageResult", data);
+      } catch (error) { show("usageResult", { error: error.message }); }
+    };
+
+    el("loadHistory").onclick = async () => {
+      try {
+        const params = new URLSearchParams({
+          page: el("page").value || "1",
+          limit: el("limit").value || "10"
+        });
+        if (el("month").value.trim()) params.set("month", el("month").value.trim());
+        if (el("historyUserId").value.trim()) params.set("userId", el("historyUserId").value.trim());
+        show("historyResult", await api(`/usage?${params}`));
+      } catch (error) { show("historyResult", { error: error.message }); }
+    };
+  </script>
+</body>
+</html>
