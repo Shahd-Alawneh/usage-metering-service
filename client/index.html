@@ -1,139 +1,81 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Usage Metering Dashboard</title>
-  <style>
-    body { font-family: system-ui, sans-serif; max-width: 850px; margin: 35px auto; padding: 0 18px; background: #f5f7fb; color: #172033; }
-    h1 { margin-bottom: 6px; }
-    .muted { color: #586174; }
-    section { background: white; border: 1px solid #dce2ec; border-radius: 12px; padding: 18px; margin: 18px 0; }
-    input, button { font: inherit; padding: 10px; margin: 5px 0; box-sizing: border-box; }
-    input { width: 100%; border: 1px solid #c8d0dd; border-radius: 6px; }
-    button { border: 0; border-radius: 6px; background: #173b70; color: white; cursor: pointer; }
-    button:hover { background: #24518f; }
-    pre { background: #101827; color: #e7edf7; padding: 12px; overflow-wrap: anywhere; white-space: pre-wrap; border-radius: 8px; }
-    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
-    @media (max-width: 650px) { .grid { grid-template-columns: 1fr; } }
-  </style>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Usage Metering Dashboard</title>
+<style>
+:root{--navy:#192e4b;--blue:#25477e;--ink:#172c4b;--muted:#637795;--border:#dce5f1;--bg:#f5f8fc;--green:#159c68;--red:#cb424c}*{box-sizing:border-box}body{margin:0;background:var(--bg);font:14px system-ui,-apple-system,Segoe UI,sans-serif;color:var(--ink)}button,input,select{font:inherit}button{cursor:pointer}aside{position:fixed;inset:0 auto 0 0;width:255px;background:linear-gradient(160deg,#172b47,#213959);color:#dbe6f8;padding:25px 17px;display:flex;flex-direction:column}.brand{display:flex;gap:13px;align-items:center;font-weight:750;font-size:18px;padding:8px 8px 30px}.brand-icon{color:#8ab6ff;font-size:27px}.nav{display:flex;align-items:center;gap:14px;width:100%;background:transparent;border:0;color:#c5d4e9;text-align:left;padding:14px 16px;border-radius:9px;margin-bottom:4px}.nav:hover,.nav.active{background:#2a4e87;color:white}.nav .symbol{width:21px;font-size:19px;text-align:center}.side-bottom{margin-top:auto;color:#b8c8e0;font-size:12px;padding:8px}.dot{display:inline-block;width:10px;height:10px;background:#20ae74;border-radius:50%;margin-right:8px}.dot.off{background:#d85555}main{margin-left:255px;padding:32px 30px 50px;max-width:1650px}.top{display:flex;align-items:start;justify-content:space-between;gap:16px;margin-bottom:25px}.top h1{font-size:29px;letter-spacing:-.7px;margin:0 0 6px}.subtitle{font-size:15px;color:var(--muted);margin:0}.top-right{display:flex;align-items:center;gap:12px}.pill{border:1px solid var(--border);border-radius:40px;padding:10px 16px;background:#f8faff;font-size:12px;white-space:nowrap}.theme{border:1px solid var(--border);background:white;border-radius:12px;padding:9px 12px;color:var(--ink)}.cards{display:grid;grid-template-columns:1fr 1fr 1fr;gap:17px;margin-bottom:27px}.card,.panel{background:white;border:1px solid var(--border);border-radius:11px;box-shadow:0 4px 15px #263d5b07}.card{padding:22px;min-height:154px}.card .heading{display:flex;align-items:center;gap:14px}.round{width:53px;height:53px;border-radius:19px;background:#eaf1fc;display:grid;place-items:center;font-size:25px;color:#204b88;flex-shrink:0}.card-title{font-size:13px;font-weight:650}.card-name{font-size:17px;font-weight:750;margin-top:8px;overflow-wrap:anywhere}.card-sub{margin-top:20px;color:#385176}.badge{background:#e3f6ed;color:#168a5c;padding:5px 11px;border-radius:20px;font-size:12px;margin-left:8px}.meter-card{background:linear-gradient(120deg,#f0fcf6,#f8fffc);border-color:#d0eadf}.meter-label{font-size:12px;color:#395473}.meter-num{font-size:18px;font-weight:750;margin:8px 0}.progress{height:10px;background:#e2e9f1;border-radius:15px;overflow:hidden;margin:13px 0 8px}.bar{height:100%;width:0;background:#2baa76;border-radius:15px}.small{font-size:12px;color:var(--muted)}.cols{display:grid;grid-template-columns:1fr 1.45fr;gap:17px;margin-bottom:18px}.panel{padding:20px}.panel h2{font-size:16px;margin:0 0 5px}.panel-head{display:flex;gap:12px;align-items:center;margin-bottom:22px}.mini-round{background:#eff4fb;color:#214779;border-radius:13px;width:38px;height:38px;display:grid;place-items:center;font-size:19px;flex-shrink:0}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}label{display:block;font-size:12px;font-weight:650;margin:0 0 7px}input,select{width:100%;height:42px;border:1px solid #d4deed;background:white;border-radius:8px;padding:10px 12px;color:var(--ink);outline-color:#5683c6}input::placeholder{color:#98a8be}.field{margin-bottom:15px}.btn{border:0;background:#25477f;color:white;padding:12px 16px;border-radius:7px;font-weight:650}.btn:hover{background:#1c3766}.btn.secondary{background:#eef3fb;color:#25477f}.btn.secondary:hover{background:#dde8f7}.btn.full{width:100%}.btn:disabled{opacity:.55;cursor:wait}.btn-row{display:flex;flex-wrap:wrap;gap:9px}.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;text-align:left;font-size:12px}th{background:#f3f6fa;color:#516684;padding:13px 10px;font-weight:650;white-space:nowrap}td{padding:12px 10px;border-bottom:1px solid #e9eef5;color:#304a6b;vertical-align:top}td.wrap{overflow-wrap:anywhere;max-width:180px}.status{display:inline-block;border-radius:7px;padding:5px 8px;font-weight:650}.status.accepted{background:#dff7e9;color:#13844f}.status.rejected{background:#ffe6e6;color:#c73945}.bottom-grid{display:grid;grid-template-columns:1fr 1fr 1.1fr;gap:17px}.mini-panel{padding:20px}.mini-panel .panel-head{margin-bottom:18px}.mini-panel .btn{margin-top:4px}.limits{display:grid;grid-template-columns:1fr 1fr;gap:10px}.limit-box{background:#f3f6fa;border-radius:8px;padding:13px;font-size:12px}.limit-box b{display:block;margin:8px 0}.limit-box p{margin:7px 0;color:#4c6482;font-size:11px}.limit-box p:before{content:'•';color:#159c68;margin-right:8px}.section-page{display:none}.section-page.active{display:block}.section-title{font-size:22px;margin:0 0 20px}.wide-grid{display:grid;grid-template-columns:1fr 1fr;gap:17px}.output{margin-top:14px;background:#13233c;color:#e8f0ff;padding:13px;border-radius:8px;white-space:pre-wrap;overflow-wrap:anywhere;font:12px ui-monospace,Consolas,monospace;max-height:300px;overflow:auto}.output:empty{display:none}.hint{font-size:12px;color:var(--muted);line-height:1.5}.info{background:#edf4fd;border:1px solid #d7e6fa;padding:12px;border-radius:8px;color:#3b567a;margin-bottom:16px}.notice{padding:12px;border-radius:8px;background:#e9f8f0;color:#16643f;margin:10px 0}.notice.error{background:#fff0f0;color:#9f2534}.footer{display:flex;justify-content:space-between;color:#8192aa;font-size:11px;margin-top:40px}.right{text-align:right}.clickable{cursor:pointer}.clickable:hover{box-shadow:0 7px 18px #263d5b14}.dark{--bg:#101a2b;--ink:#e8efff;--muted:#a5b5ce;--border:#354963;background:#101a2b}.dark .panel,.dark .card:not(.meter-card),.dark .theme{background:#1b2b43}.dark input,.dark select{background:#243650;color:#f5f8ff;border-color:#41536e}.dark .limit-box,.dark th{background:#243650}.dark td{color:#cbd9f0;border-color:#354963}.dark .card-sub,.dark .limit-box p{color:#bbcee8}.dark .meter-card{background:#193e34}.dark .pill{background:#203149}.dark .btn.secondary{background:#304766;color:white}@media(max-width:1150px){.cards,.bottom-grid{grid-template-columns:1fr 1fr}.meter-card{grid-column:span 2}.cols{grid-template-columns:1fr}}@media(max-width:780px){aside{position:static;width:100%;padding:12px;display:block}.brand{padding:5px 8px 12px}.nav-list{display:flex;overflow-x:auto;gap:4px}.nav{width:auto;white-space:nowrap;padding:10px}.side-bottom{display:none}main{margin:0;padding:20px 14px}.top h1{font-size:23px}.cards,.bottom-grid,.wide-grid{grid-template-columns:1fr}.meter-card{grid-column:auto}.top{flex-wrap:wrap}.form-grid{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
-  <h1>Usage Metering Dashboard</h1>
-  <p class="muted">Create accounts and users, submit usage requests, and inspect usage history.</p>
-
-  <section>
-    <h2>1. Create an account</h2>
-    <label>Account name<input id="accountName" value="Demo Company"></label>
-    <button id="createAccount">Create account</button>
-    <p class="muted">The API key is shown only in this response. Save it securely.</p>
-    <pre id="accountResult">No account created yet.</pre>
-  </section>
-
-  <section>
-    <h2>2. Account credentials</h2>
-    <label>API key<input id="apiKey" type="password" placeholder="Paste your account API key"></label>
-    <label>User ID<input id="userId" placeholder="Create a user below or enter an existing user UUID"></label>
-    <button id="showKey">Show / hide API key</button>
-    <hr>
-    <h3>Create a user</h3>
-    <label>User name<input id="userName" value="Demo User"></label>
-    <button id="createUser">Create user</button>
-    <pre id="userResult">User creation result will appear here.</pre>
-  </section>
-
-  <section>
-    <h2>3. Submit usage</h2>
-    <label>Request ID<input id="requestId" placeholder="e.g. request-001"></label>
-    <label>Units<input id="units" type="number" min="1" value="10"></label>
-    <button id="consume">Submit usage</button>
-    <pre id="usageResult">Usage response will appear here.</pre>
-  </section>
-
-  <section>
-    <h2>4. Usage history</h2>
-    <div class="grid">
-      <label>Page<input id="page" type="number" min="1" value="1"></label>
-      <label>Items per page (max 100)<input id="limit" type="number" min="1" max="100" value="10"></label>
-      <label>Month (optional, YYYY-MM)<input id="month" placeholder="2026-10"></label>
-      <label>User ID filter (optional)<input id="historyUserId" placeholder="User UUID"></label>
-    </div>
-    <button id="loadHistory">Load history</button>
-    <pre id="historyResult">History will appear here.</pre>
-  </section>
-
-  <script>
-    const el = (id) => document.getElementById(id);
-    const show = (id, value) => { el(id).textContent = JSON.stringify(value, null, 2); };
-
-    async function api(path, options = {}) {
-      const headers = { ...(options.headers || {}) };
-      if (options.body) headers["Content-Type"] = "application/json";
-      if (el("apiKey").value.trim()) headers["x-api-key"] = el("apiKey").value.trim();
-
-      const response = await fetch(path, { ...options, headers });
-      const text = await response.text();
-      let data;
-      try { data = JSON.parse(text); } catch { data = { response: text }; }
-      if (!response.ok) throw new Error(JSON.stringify({ status: response.status, ...data }));
-      return data;
-    }
-
-    el("createAccount").onclick = async () => {
-      try {
-        const response = await fetch("/accounts", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name: el("accountName").value })
-        });
-        const data = await response.json();
-        if (!response.ok) throw new Error(JSON.stringify(data));
-        el("apiKey").value = data.apiKey;
-        show("accountResult", data);
-      } catch (error) { show("accountResult", { error: error.message }); }
-    };
-
-    el("showKey").onclick = () => {
-      el("apiKey").type = el("apiKey").type === "password" ? "text" : "password";
-    };
-
-    el("createUser").onclick = async () => {
-      try {
-        const data = await api("/users", {
-          method: "POST",
-          body: JSON.stringify({ name: el("userName").value })
-        });
-        el("userId").value = data.user.id;
-        el("historyUserId").value = data.user.id;
-        show("userResult", data);
-      } catch (error) { show("userResult", { error: error.message }); }
-    };
-
-    el("consume").onclick = async () => {
-      try {
-        const data = await api("/usage", {
-          method: "POST",
-          body: JSON.stringify({
-            userId: el("userId").value.trim(),
-            requestId: el("requestId").value.trim(),
-            units: Number(el("units").value)
-          })
-        });
-        show("usageResult", data);
-      } catch (error) { show("usageResult", { error: error.message }); }
-    };
-
-    el("loadHistory").onclick = async () => {
-      try {
-        const params = new URLSearchParams({
-          page: el("page").value || "1",
-          limit: el("limit").value || "10"
-        });
-        if (el("month").value.trim()) params.set("month", el("month").value.trim());
-        if (el("historyUserId").value.trim()) params.set("userId", el("historyUserId").value.trim());
-        show("historyResult", await api(`/usage?${params}`));
-      } catch (error) { show("historyResult", { error: error.message }); }
-    };
-  </script>
+<aside><div class="brand"><span class="brand-icon">▥</span>Usage Metering</div><div class="nav-list">
+<button class="nav active" data-page="overview"><span class="symbol">⌂</span>Overview</button>
+<button class="nav" data-page="account"><span class="symbol">▣</span>Account</button>
+<button class="nav" data-page="users"><span class="symbol">♙</span>Users</button>
+<button class="nav" data-page="usage"><span class="symbol">ϟ</span>Usage</button>
+<button class="nav" data-page="history"><span class="symbol">◴</span>History</button>
+<button class="nav" data-page="plans"><span class="symbol">▤</span>Plans</button></div>
+<div class="side-bottom"><span class="dot off" id="sideDot"></span><span id="healthText">Checking service...</span></div></aside>
+<main><header class="top"><div><h1 id="pageHeading">Welcome to Usage Metering</h1><p class="subtitle" id="pageSubtitle">Manage your account, track usage, and control your plan limits.</p></div><div class="top-right"><div class="pill"><span class="dot off" id="apiDot"></span><span id="apiState">API key needed</span></div><button class="theme" id="themeToggle" title="Toggle theme">☼</button></div></header>
+<div id="feedback" role="status" aria-live="polite"></div>
+<section id="overview" class="section-page active">
+<div class="cards">
+<div class="card clickable" data-go="account"><div class="heading"><div class="round">▣</div><div><div class="card-title">Account</div><div class="card-name" id="overviewAccount">Not connected</div></div></div><div class="card-sub">Plan: <span id="overviewAccountPlan">—</span><span class="badge" id="accountActive">Connect key</span></div></div>
+<div class="card clickable" data-go="users"><div class="heading"><div class="round">♟</div><div><div class="card-title">Current User</div><div class="card-name" id="overviewUser">No user selected</div></div></div><div class="card-sub">Plan: <span id="overviewUserPlan">—</span><span class="badge" id="userActive">Select user</span></div></div>
+<div class="card meter-card"><div class="heading"><div class="round" style="background:#dff6e9;color:#168c5a">ϟ</div><div><div class="meter-label">Monthly Usage (Account)</div><div class="meter-num" id="overviewUsage">— / —</div></div></div><div class="progress"><div class="bar" id="overviewBar"></div></div><div class="small">Remaining: <strong id="overviewRemaining">—</strong><span class="right" id="overviewPct" style="float:right">—</span></div></div>
+</div>
+<div class="cols"><div class="panel"><div class="panel-head"><div class="mini-round">ϟ</div><div><h2>Submit Usage</h2><div class="small">Record your API usage</div></div></div>
+<div class="field"><label for="quickUser">User</label><select id="quickUser"><option value="">Select a user</option></select></div><div class="form-grid"><div class="field"><label for="quickRequest">Request ID</label><input id="quickRequest" placeholder="e.g. request-001"></div><div class="field"><label for="quickUnits">Units</label><input id="quickUnits" type="number" min="1" step="1" value="10"></div></div><button class="btn full" id="quickConsume">➤ &nbsp; Submit Usage</button><div class="output" id="quickOutput"></div></div>
+<div class="panel"><div class="panel-head"><div class="mini-round">◴</div><div><h2>Recent Usage History</h2><div class="small">Your latest usage requests</div></div></div><div class="table-wrap"><table><thead><tr><th>Date & Time</th><th>Request ID</th><th>Units</th><th>Status</th><th>Scope / Rule</th></tr></thead><tbody id="recentRows"><tr><td colspan="5">Connect an account to load history.</td></tr></tbody></table></div><div class="right" style="margin-top:13px"><button class="btn secondary" data-go="history">View full history →</button></div></div></div>
+<div class="bottom-grid"><div class="panel mini-panel"><div class="panel-head"><div class="mini-round">▣</div><div><h2>Create Account</h2><div class="small">Register an account and get your API key</div></div></div><div class="field"><label for="quickAccountName">Account name</label><input id="quickAccountName" placeholder="e.g. Acme Corp"></div><button class="btn full" id="quickCreateAccount">＋ &nbsp; Create Account</button></div>
+<div class="panel mini-panel"><div class="panel-head"><div class="mini-round">♟</div><div><h2>Create User</h2><div class="small">Add a user to your account</div></div></div><div class="field"><label for="quickUserName">User name</label><input id="quickUserName" placeholder="e.g. John Doe"></div><button class="btn full" id="quickCreateUser">＋ &nbsp; Create User</button></div>
+<div class="panel mini-panel"><div class="panel-head"><div class="mini-round">▤</div><div><h2>Plan Details</h2><div class="small">Your current plan limits</div></div></div><div class="limits"><div class="limit-box">Account Plan<b id="miniAccountPlan">—</b><p id="miniAccountMonthly">Monthly allowance: —</p><p id="miniAccountMax">Max per request: —</p><p>Scope: Account</p></div><div class="limit-box">User Plan<b id="miniUserPlan">—</b><p id="miniUserMonthly">Monthly allowance: —</p><p id="miniUserMax">Max per request: —</p><p>Scope: User</p></div></div></div></div>
+</section>
+<section id="account" class="section-page"><h2 class="section-title">Account & Credentials</h2><div class="wide-grid"><div class="panel"><h2>Connect to Your Account</h2><p class="hint">Use the API key issued when you created your account. The key stays in this browser tab only.</p><div class="field"><label for="apiKey">Account API Key</label><input id="apiKey" type="password" autocomplete="off" placeholder="ums_..."></div><div class="btn-row"><button class="btn" id="connect">Connect / Refresh</button><button class="btn secondary" id="toggleKey">Show / Hide</button><button class="btn secondary" id="disconnect">Disconnect</button></div><div class="output" id="accountOutput"></div></div><div class="panel"><h2>Create Account</h2><p class="hint">A new account starts with the predefined Starter plan. Save its newly issued API key securely.</p><div class="field"><label for="accountName">Account name</label><input id="accountName" placeholder="Company name"></div><button class="btn" id="createAccount">Create Account</button><div class="output" id="createAccountOutput"></div></div></div><div class="panel" style="margin-top:17px"><h2>Current Account</h2><div id="accountDetails" class="hint">Connect to view account details.</div></div></section>
+<section id="users" class="section-page"><h2 class="section-title">Users</h2><div class="wide-grid"><div class="panel"><h2>Create a User</h2><div class="field"><label for="userName">User name</label><input id="userName" placeholder="User name"></div><button class="btn" id="createUser">Create User</button><div class="output" id="createUserOutput"></div></div><div class="panel"><h2>Change User Plan</h2><div class="field"><label for="assignUser">User</label><select id="assignUser"></select></div><div class="field"><label for="assignUserPlan">User plan</label><select id="assignUserPlan"></select></div><button class="btn" id="saveUserPlan">Assign Plan</button><div class="output" id="userPlanOutput"></div></div></div><div class="panel" style="margin-top:17px"><h2>Users & Remaining Allowances</h2><div class="table-wrap"><table><thead><tr><th>Name</th><th>User ID</th><th>Plan</th><th>Consumed</th><th>Remaining</th></tr></thead><tbody id="usersRows"></tbody></table></div></div></section>
+<section id="usage" class="section-page"><h2 class="section-title">Usage & Allowances</h2><div class="wide-grid"><div class="panel"><h2>Submit a Usage Request</h2><div class="field"><label for="usageUser">User</label><select id="usageUser"></select></div><div class="field"><label for="usageRequest">Unique Request ID</label><input id="usageRequest" placeholder="e.g. document-001"></div><div class="field"><label for="usageUnits">Units</label><input id="usageUnits" type="number" min="1" step="1" value="10"></div><button class="btn" id="submitUsage">Submit Usage</button><div class="output" id="usageOutput"></div></div><div class="panel"><h2>Current Month (UTC)</h2><div id="usageSummary" class="hint">Connect to view consumption.</div><button class="btn secondary" id="refreshSummary" style="margin-top:15px">Refresh Summary</button></div></div></section>
+<section id="history" class="section-page"><h2 class="section-title">Usage History</h2><div class="panel"><div class="form-grid"><div class="field"><label for="historyMonth">UTC Month (optional)</label><input id="historyMonth" placeholder="YYYY-MM"></div><div class="field"><label for="historyUser">User filter</label><select id="historyUser"><option value="">All users</option></select></div><div class="field"><label for="historyPage">Page</label><input id="historyPage" type="number" min="1" value="1"></div><div class="field"><label for="historyLimit">Page size (1–100)</label><input id="historyLimit" type="number" min="1" max="100" value="10"></div></div><button class="btn" id="loadHistory">Load History</button><p class="hint" id="historyCount"></p><div class="table-wrap"><table><thead><tr><th>Date & Time</th><th>Request ID</th><th>User ID</th><th>Units</th><th>Status</th><th>Scope / Rule</th></tr></thead><tbody id="historyRows"></tbody></table></div><div class="btn-row" style="margin-top:16px"><button class="btn secondary" id="prevPage">← Previous</button><button class="btn secondary" id="nextPage">Next →</button></div><div class="output" id="historyOutput"></div></div></section>
+<section id="plans" class="section-page"><h2 class="section-title">Plans & Rules</h2><div class="wide-grid"><div class="panel"><h2>Create Custom Plan</h2><div class="field"><label for="planScope">Scope</label><select id="planScope"><option value="user">User</option><option value="account">Account</option></select></div><div class="field"><label for="planName">Plan name</label><input id="planName" placeholder="e.g. Team Plus"></div><div class="form-grid"><div class="field"><label for="planMonthly">Monthly allowance</label><input id="planMonthly" type="number" min="0" step="1" value="100"></div><div class="field"><label for="planMax">Max units per request</label><input id="planMax" type="number" min="1" step="1" value="20"></div></div><button class="btn" id="createPlan">Create Plan</button><div class="output" id="createPlanOutput"></div></div><div class="panel"><h2>Assign Account Plan</h2><div class="field"><label for="assignAccountPlan">Account plan</label><select id="assignAccountPlan"></select></div><button class="btn" id="saveAccountPlan">Assign Account Plan</button><div class="output" id="accountPlanOutput"></div><p class="hint">Switching plans does not reset already consumed monthly units.</p></div></div><div class="wide-grid" style="margin-top:17px"><div class="panel"><h2>Update Custom Plan</h2><div class="field"><label for="editPlan">Your custom plan</label><select id="editPlan"></select></div><div class="field"><label for="editPlanName">New name</label><input id="editPlanName"></div><div class="form-grid"><div class="field"><label for="editMonthly">Monthly allowance</label><input id="editMonthly" type="number" min="0" step="1"></div><div class="field"><label for="editMax">Max units per request</label><input id="editMax" type="number" min="1" step="1"></div></div><button class="btn" id="updatePlan">Update Custom Plan</button><div class="output" id="editPlanOutput"></div></div><div class="panel"><h2>Available Plans</h2><div class="table-wrap"><table><thead><tr><th>Scope</th><th>Name</th><th>Monthly</th><th>Max / request</th><th>Type</th></tr></thead><tbody id="plansRows"></tbody></table></div><button class="btn secondary" id="refreshPlans" style="margin-top:12px">Refresh Plans</button></div></div></section>
+<footer class="footer"><span>Usage Metering Dashboard</span><span>Powered by Usage Metering Service</span></footer>
+</main>
+<script>
+'use strict';
+const $=id=>document.getElementById(id);
+const state={summary:null,plans:[],history:null,key:''};
+const format=n=>Number(n??0).toLocaleString('en-US');
+const output=(id,data)=>{$(id).textContent=typeof data==='string'?data:JSON.stringify(data,null,2)};
+function notify(message,error=false){const n=$('feedback');n.className='notice'+(error?' error':'');n.textContent=message;clearTimeout(notify.timeout);notify.timeout=setTimeout(()=>{n.textContent='';n.className=''},6500)}
+function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+async function api(path,options={}){const headers={...(options.headers||{})};if(options.body)headers['Content-Type']='application/json';if(state.key)headers['x-api-key']=state.key;const r=await fetch(path,{...options,headers});const raw=await r.text();let data;try{data=JSON.parse(raw)}catch{data={response:raw}}if(!r.ok)throw new Error(data.error||JSON.stringify(data));return data}
+function setOptions(id,items,placeholder='Select...'){const el=$(id),prior=el.value;el.replaceChildren();if(placeholder){const o=new Option(placeholder,'');el.add(o)}for(const item of items)el.add(new Option(item.label,item.value));if([...el.options].some(o=>o.value===prior))el.value=prior;else if(!placeholder&&el.options.length)el.selectedIndex=0}
+function selectedUser(){const id=$('quickUser').value||$('usageUser').value;return state.summary?.users.find(u=>u.id===id)||state.summary?.users[0]}
+function refreshView(){const s=state.summary;if(!s){$('overviewAccount').textContent='Not connected';$('overviewUser').textContent='No user selected';$('overviewUsage').textContent='— / —';$('overviewRemaining').textContent='—';$('overviewBar').style.width='0%';$('apiState').textContent='API key needed';$('apiDot').classList.add('off');return}const a=s.account,u=selectedUser();$('apiState').textContent='API Connected';$('apiDot').classList.remove('off');$('overviewAccount').textContent=a.name;$('overviewAccountPlan').textContent=a.plan.name;$('accountActive').textContent='Active';$('overviewUser').textContent=u?.name||'No user selected';$('overviewUserPlan').textContent=u?.plan.name||'—';$('userActive').textContent=u?'Active':'No users';$('overviewUsage').textContent=`${format(a.consumed)} / ${format(a.plan.monthlyAllowance)}`;$('overviewRemaining').textContent=format(a.remaining);const pct=a.plan.monthlyAllowance?Math.min(100,100*a.consumed/a.plan.monthlyAllowance):(a.consumed?100:0);$('overviewPct').textContent=Math.round(pct)+'%';$('overviewBar').style.width=pct+'%';$('miniAccountPlan').textContent=a.plan.name;$('miniAccountMonthly').textContent='Monthly allowance: '+format(a.plan.monthlyAllowance);$('miniAccountMax').textContent='Max per request: '+format(a.plan.maxUnitsPerRequest);$('miniUserPlan').textContent=u?.plan.name||'—';$('miniUserMonthly').textContent='Monthly allowance: '+(u?format(u.plan.monthlyAllowance):'—');$('miniUserMax').textContent='Max per request: '+(u?format(u.plan.maxUnitsPerRequest):'—');$('accountDetails').textContent=`${a.name}\nAccount ID: ${a.id}\nPlan: ${a.plan.name}\nConsumed: ${a.consumed}\nRemaining: ${a.remaining}\nUTC period: ${s.periodStart}`;$('usageSummary').textContent=`Account: ${a.name}\nPlan: ${a.plan.name}\nConsumed: ${a.consumed}\nRemaining: ${a.remaining}\n\n`+s.users.map(x=>`${x.name} (${x.plan.name}) — Consumed: ${x.consumed}; Remaining: ${x.remaining}`).join('\n');$('usersRows').innerHTML=s.users.length?s.users.map(x=>`<tr><td>${esc(x.name)}</td><td class="wrap">${esc(x.id)}</td><td>${esc(x.plan.name)}</td><td>${format(x.consumed)}</td><td>${format(x.remaining)}</td></tr>`).join(''):'<tr><td colspan="5">No users yet.</td></tr>'}
+function refreshSelectors(){const users=state.summary?.users||[];const opts=users.map(u=>({value:u.id,label:`${u.name} — ${u.plan.name}`}));for(const id of ['quickUser','usageUser','assignUser'])setOptions(id,opts);setOptions('historyUser',opts,'All users');const plans=state.plans;setOptions('assignAccountPlan',plans.filter(p=>p.scope==='account').map(p=>({value:p.id,label:p.name+(p.is_builtin?' (built-in)':'')})),'Select account plan');setOptions('assignUserPlan',plans.filter(p=>p.scope==='user').map(p=>({value:p.id,label:p.name+(p.is_builtin?' (built-in)':'')})),'Select user plan');setOptions('editPlan',plans.filter(p=>!p.is_builtin).map(p=>({value:p.id,label:`${p.name} (${p.scope})`})),'Select custom plan');if(state.summary){$('assignAccountPlan').value=state.summary.account.plan.id;const u=state.summary.users.find(x=>x.id===$('assignUser').value);if(u)$('assignUserPlan').value=u.plan.id}renderPlans()}
+function renderPlans(){$('plansRows').innerHTML=state.plans.length?state.plans.map(p=>`<tr><td>${esc(p.scope)}</td><td>${esc(p.name)}</td><td>${format(p.monthly_allowance)}</td><td>${format(p.max_units_per_request)}</td><td>${p.is_builtin?'Built-in':'Custom'}</td></tr>`).join(''):'<tr><td colspan="5">Connect to load plans.</td></tr>'}
+async function refresh(){if(!state.key){notify('Enter an API key in Account first.',true);return}const [summary,plans]=await Promise.all([api('/usage/summary'),api('/plans')]);state.summary=summary;state.plans=plans.plans||[];refreshSelectors();refreshView();await recentHistory()}
+function showPage(page){document.querySelectorAll('.section-page').forEach(x=>x.classList.toggle('active',x.id===page));document.querySelectorAll('.nav').forEach(x=>x.classList.toggle('active',x.dataset.page===page));const labels={overview:['Welcome to Usage Metering','Manage your account, track usage, and control your plan limits.'],account:['Account','Manage your account credentials and connection.'],users:['Users','Manage users and their individual plans.'],usage:['Usage','Consume units and inspect remaining allowances.'],history:['History','Review previous requests and outcomes.'],plans:['Plans','Configure, update, and assign quota rules.']};$('pageHeading').textContent=labels[page][0];$('pageSubtitle').textContent=labels[page][1];window.scrollTo({top:0,behavior:'smooth'})}
+document.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>showPage(b.dataset.page));document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>showPage(b.dataset.go));$('themeToggle').onclick=()=>document.body.classList.toggle('dark');
+async function safe(action,out){try{await action()}catch(e){if(out)output(out,{error:e.message});notify(e.message,true)}}
+async function createAccount(name,out){if(!name.trim())throw Error('Enter an account name.');const data=await api('/accounts',{method:'POST',body:JSON.stringify({name:name.trim()})});output(out,data);$('apiKey').value=data.apiKey;state.key=data.apiKey;notify('Account created. Save the API key shown in the result securely; it is only issued once.');await refresh();showPage('account')}
+$('quickCreateAccount').onclick=()=>safe(()=>createAccount($('quickAccountName').value,'createAccountOutput'),'createAccountOutput');$('createAccount').onclick=()=>safe(()=>createAccount($('accountName').value,'createAccountOutput'),'createAccountOutput');
+$('connect').onclick=()=>safe(async()=>{state.key=$('apiKey').value.trim();await refresh();notify('Account connected.')},'accountOutput');$('toggleKey').onclick=()=>{$('apiKey').type=$('apiKey').type==='password'?'text':'password'};$('disconnect').onclick=()=>{state.key='';state.summary=null;state.plans=[];$('apiKey').value='';refreshSelectors();refreshView();$('recentRows').innerHTML='<tr><td colspan="5">Connect to load history.</td></tr>';notify('Disconnected.');showPage('account')};
+async function createUser(name,out){if(!name.trim())throw Error('Enter a user name.');const data=await api('/users',{method:'POST',body:JSON.stringify({name:name.trim()})});output(out,data);await refresh();for(const id of ['quickUser','usageUser','assignUser'])$(id).value=data.user.id;refreshView();notify('User created.')}
+$('quickCreateUser').onclick=()=>safe(()=>createUser($('quickUserName').value,'createUserOutput'),'createUserOutput');$('createUser').onclick=()=>safe(()=>createUser($('userName').value,'createUserOutput'),'createUserOutput');
+async function consume(userId,requestId,units,out){if(!userId)throw Error('Select a user.');if(!requestId.trim())throw Error('Enter a unique request ID.');if(!Number.isSafeInteger(units)||units<=0)throw Error('Units must be a positive whole number.');const result=await api('/usage',{method:'POST',body:JSON.stringify({userId,requestId:requestId.trim(),units})});output(out,result);await refresh();notify(result.status==='accepted'?'Usage accepted.':`Usage rejected: ${result.rejectionScope} / ${result.rejectionRule}`,result.status!=='accepted')}
+$('quickConsume').onclick=()=>safe(()=>consume($('quickUser').value,$('quickRequest').value,Number($('quickUnits').value),'quickOutput'),'quickOutput');$('submitUsage').onclick=()=>safe(()=>consume($('usageUser').value,$('usageRequest').value,Number($('usageUnits').value),'usageOutput'),'usageOutput');$('refreshSummary').onclick=()=>safe(refresh);
+function statusMarkup(r){return `<span class="status ${r.status==='accepted'?'accepted':'rejected'}">${esc(r.status)}</span>`}
+function dateStr(d){if(!d)return '—';const x=new Date(d);return Number.isNaN(x.getTime())?String(d):x.toLocaleString()}
+function rule(r){return r.rejection_scope?`${r.rejection_scope} / ${r.rejection_rule||'—'}`:'—'}
+async function recentHistory(){const data=await api('/usage?page=1&limit=5');$('recentRows').innerHTML=data.requests.length?data.requests.map(r=>`<tr><td>${esc(dateStr(r.created_at))}</td><td class="wrap">${esc(r.request_id)}</td><td>${format(r.units)}</td><td>${statusMarkup(r)}</td><td>${esc(rule(r))}</td></tr>`).join(''):'<tr><td colspan="5">No requests yet.</td></tr>'}
+async function history(){const params=new URLSearchParams({page:$('historyPage').value||'1',limit:$('historyLimit').value||'10'});if($('historyMonth').value.trim())params.set('month',$('historyMonth').value.trim());if($('historyUser').value)params.set('userId',$('historyUser').value);const data=await api('/usage?'+params);state.history=data;$('historyCount').textContent=`${data.pagination.total} requests · Page ${data.pagination.page} of ${data.pagination.totalPages||1}`;$('historyRows').innerHTML=data.requests.length?data.requests.map(r=>`<tr><td>${esc(dateStr(r.created_at))}</td><td class="wrap">${esc(r.request_id)}</td><td class="wrap">${esc(r.user_id)}</td><td>${format(r.units)}</td><td>${statusMarkup(r)}</td><td>${esc(rule(r))}</td></tr>`).join(''):'<tr><td colspan="6">No matching requests.</td></tr>'}
+$('loadHistory').onclick=()=>safe(history,'historyOutput');$('prevPage').onclick=()=>{const n=Number($('historyPage').value);if(n>1){$('historyPage').value=n-1;safe(history,'historyOutput')}};$('nextPage').onclick=()=>{const n=Number($('historyPage').value);if(state.history&&n<state.history.pagination.totalPages){$('historyPage').value=n+1;safe(history,'historyOutput')}};
+$('quickUser').onchange=refreshView;$('assignUser').onchange=()=>{const u=state.summary?.users.find(x=>x.id===$('assignUser').value);if(u)$('assignUserPlan').value=u.plan.id};
+$('createPlan').onclick=()=>safe(async()=>{const data=await api('/plans',{method:'POST',body:JSON.stringify({scope:$('planScope').value,name:$('planName').value,monthlyAllowance:Number($('planMonthly').value),maxUnitsPerRequest:Number($('planMax').value)})});output('createPlanOutput',data);await refresh();notify('Custom plan created.')},'createPlanOutput');
+$('saveAccountPlan').onclick=()=>safe(async()=>{const planId=$('assignAccountPlan').value;if(!planId)throw Error('Select a plan.');const data=await api('/plans/account/current',{method:'PATCH',body:JSON.stringify({planId})});output('accountPlanOutput',data);await refresh();notify('Account plan updated. Previously consumed units are preserved.')},'accountPlanOutput');
+$('saveUserPlan').onclick=()=>safe(async()=>{const userId=$('assignUser').value,planId=$('assignUserPlan').value;if(!userId||!planId)throw Error('Select a user and a plan.');const data=await api(`/plans/users/${encodeURIComponent(userId)}/current`,{method:'PATCH',body:JSON.stringify({planId})});output('userPlanOutput',data);await refresh();notify('User plan updated. Previously consumed units are preserved.')},'userPlanOutput');
+$('editPlan').onchange=()=>{const p=state.plans.find(x=>x.id===$('editPlan').value);if(p){$('editPlanName').value=p.name;$('editMonthly').value=p.monthly_allowance;$('editMax').value=p.max_units_per_request}};
+$('updatePlan').onclick=()=>safe(async()=>{const id=$('editPlan').value;if(!id)throw Error('Select a custom plan.');const data=await api(`/plans/${encodeURIComponent(id)}`,{method:'PATCH',body:JSON.stringify({name:$('editPlanName').value,monthlyAllowance:Number($('editMonthly').value),maxUnitsPerRequest:Number($('editMax').value)})});output('editPlanOutput',data);await refresh();notify('Custom plan updated. Changes apply to subsequent requests.')},'editPlanOutput');$('refreshPlans').onclick=()=>safe(refresh);
+(async()=>{try{const health=await api('/health');const ok=health.status==='ok';$('sideDot').classList.toggle('off',!ok);$('healthText').textContent=ok?'Service is healthy':'Service unavailable'}catch{$('sideDot').classList.add('off');$('healthText').textContent='Service unavailable'}})();
+</script>
 </body>
 </html>

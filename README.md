@@ -150,3 +150,104 @@ Integration tests use the configured PostgreSQL database and create test account
 - API keys are stored as SHA-256 hashes in the database.
 - Use HTTPS, secret management, rate limiting, and key rotation in production.
 - The supplied Compose setup is intended for local development and evaluation, not as a production deployment configuration.
+
+## Usage Summary
+
+The service provides a usage summary endpoint:
+
+```http
+GET /usage/summary
+x-api-key: YOUR_API_KEY
+```
+
+The summary reports consumed and remaining units for the account and its users, based on their assigned plans.
+
+## Demo Scenario
+
+An automated demo script demonstrates the main project requirements.
+
+Run the API and PostgreSQL first, then execute:
+
+```bash
+node demo/run-demo.mjs
+```
+
+The demo creates a new account and two users with different plans. It demonstrates:
+
+- Accepted usage requests.
+- Rejection when a user's per-request limit is exceeded.
+- Rejection when the account's monthly allowance is exceeded.
+- Updating an account plan.
+- Successfully submitting usage after the plan change.
+- Checking remaining account and user allowances.
+
+The verified local demo passed all seven checks.
+
+At the end of that run:
+
+| Resource | Consumed | Remaining |
+|---|---:|---:|
+| Account | 105 | 45 |
+| User A | 15 | 15 |
+| User B | 90 | 10 |
+
+These values are from one example run. The script creates fresh records when executed again.
+
+## Automated Testing
+
+Run all automated tests:
+
+```bash
+npm test
+```
+
+The test suite covers authentication, account isolation, accepted and rejected usage, idempotency, pagination, plan changes, usage summaries, and concurrency.
+
+The verified local test run completed successfully:
+
+- Test files: 2 passed
+- Tests: 11 passed
+- Failed tests: 0
+
+### Concurrency Test
+
+The concurrency test submits 20 usage requests simultaneously against an account with a monthly allowance of 10 units.
+
+Expected and verified results:
+
+- 10 requests accepted.
+- 10 requests rejected.
+- Exactly 10 units consumed.
+- Zero remaining account units.
+
+This checks that concurrent requests cannot consume more than the configured allowance.
+
+## Performance Testing
+
+Run the performance test while the API and database are running:
+
+```bash
+node performance/load-test.mjs
+```
+
+The script creates a fresh account and user, configures their allowances, and submits 100 usage requests using 10 concurrent workers.
+
+Results from one local test run:
+
+| Metric | Result |
+|---|---:|
+| Total requests | 100 |
+| Concurrent workers | 10 |
+| Accepted requests | 100 |
+| Rejected requests | 0 |
+| Errors | 0 |
+| Total duration | 1.40 seconds |
+| Throughput | 71.61 requests/second |
+| Average latency | 134.98 ms |
+| P50 latency | 116.02 ms |
+| P95 latency | 213.48 ms |
+| P99 latency | 234.06 ms |
+| Account units consumed | 100 |
+
+The performance test passed. These measurements describe a single local run and may vary with hardware, database state, and system load.
+

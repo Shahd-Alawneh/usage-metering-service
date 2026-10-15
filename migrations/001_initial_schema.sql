@@ -4,7 +4,8 @@ CREATE TABLE schema_migrations (
     applied_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE TABLE accounts (  --حسابات الشركات ومفاتيح الوصول
+-- Stores company accounts and API key hashes.
+CREATE TABLE accounts (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name TEXT NOT NULL,
     api_key_hash TEXT NOT NULL UNIQUE,
@@ -12,7 +13,8 @@ CREATE TABLE accounts (  --حسابات الشركات ومفاتيح الوصو
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE TABLE plans (  --الخطط وحدود الاستهلاك
+-- Stores built-in and custom usage plans.
+CREATE TABLE plans (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     owner_account_id UUID REFERENCES accounts(id) ON DELETE CASCADE,
     scope TEXT NOT NULL CHECK (scope IN ('account', 'user')),
@@ -30,15 +32,16 @@ CREATE TABLE plans (  --الخطط وحدود الاستهلاك
     )
 );
 
-CREATE UNIQUE INDEX plans_builtin_unique  
+CREATE UNIQUE INDEX plans_builtin_unique
     ON plans (scope, name)
     WHERE is_builtin = TRUE;
 
-CREATE UNIQUE INDEX plans_custom_unique 
+CREATE UNIQUE INDEX plans_custom_unique
     ON plans (owner_account_id, scope, name)
     WHERE is_builtin = FALSE;
 
-CREATE TABLE users (-- المستخدمون وخططهم الفردية
+-- Stores users and their assigned plans.
+CREATE TABLE users (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     account_id UUID NOT NULL REFERENCES accounts(id) ON DELETE CASCADE,
     name TEXT NOT NULL,
@@ -52,7 +55,8 @@ ALTER TABLE accounts
     ADD CONSTRAINT accounts_current_plan_fk
     FOREIGN KEY (current_plan_id) REFERENCES plans(id);
 
-CREATE TABLE usage_periods (-- إجمالي الاستهلاك الشهري لكل حساب ولكل مستخدم
+-- Tracks monthly usage totals for accounts and individual users.
+CREATE TABLE usage_periods (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     account_id UUID NOT NULL REFERENCES accounts(id) ON DELETE CASCADE,
     user_id UUID,
@@ -75,7 +79,8 @@ CREATE UNIQUE INDEX usage_user_period_unique
     ON usage_periods (account_id, user_id, period_start)
     WHERE user_id IS NOT NULL;
 
-CREATE TABLE usage_requests ( -سجل كل طلب ونتيجته 
+-- Records each usage request and its decision.
+CREATE TABLE usage_requests (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     account_id UUID NOT NULL REFERENCES accounts(id) ON DELETE CASCADE,
     user_id UUID NOT NULL,

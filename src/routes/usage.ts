@@ -12,6 +12,104 @@ const usageSchema = z.object({
   units: z.number().int().positive().safe(),
 });
 
+router.get("/summary", authenticateApiKey, async (_req, res, next) => {
+  try {
+    const accountId = res.locals.accountId as string;
+
+    const periodStart = new Date(
+      Date.UTC(
+        new Date().getUTCFullYear(),
+        new Date().getUTCMonth(),
+        1,
+      ),
+    )
+      .toISOString()
+      .slice(0, 10);
+
+    const accountResult = await pool.query(
+      `SELECT
+         a.id AS account_id,
+         a.name AS account_name,
+         p.id AS plan_id,
+         p.name AS plan_name,
+         p.monthly_allowance,
+         p.max_units_per_request,
+         COALESCE(up.units_consumed, 0) AS consumed
+       FROM accounts a
+       JOIN plans p ON p.id = a.current_plan_id
+       LEFT JOIN usage_periods up
+         ON up.account_id = a.id
+        AND up.user_id IS NULL
+        AND up.period_start = $2::date
+       WHERE a.id = $1`,
+      [accountId, periodStart],
+    );
+
+    if (accountResult.rowCount !== 1) {
+      res.status(404).json({ error: "Account or current plan not found" });
+      return;
+    }
+
+    const userResult = await pool.query(
+      `SELECT
+         u.id AS user_id,
+         u.name AS user_name,
+         p.id AS plan_id,
+         p.name AS plan_name,
+         p.monthly_allowance,
+         p.max_units_per_request,
+         COALESCE(up.units_consumed, 0) AS consumed
+       FROM users u
+       JOIN plans p ON p.id = u.current_plan_id
+       LEFT JOIN usage_periods up
+         ON up.account_id = u.account_id
+        AND up.user_id = u.id
+        AND up.period_start = $2::date
+       WHERE u.account_id = $1
+       ORDER BY u.name, u.id`,
+      [accountId, periodStart],
+    );
+
+    const account = accountResult.rows[0];
+    const accountAllowance = Number(account.monthly_allowance);
+    const accountConsumed = Number(account.consumed);
+
+    res.status(200).json({
+      periodStart,
+      account: {
+        id: account.account_id,
+        name: account.account_name,
+        plan: {
+          id: account.plan_id,
+          name: account.plan_name,
+          monthlyAllowance: accountAllowance,
+          maxUnitsPerRequest: Number(account.max_units_per_request),
+        },
+        consumed: accountConsumed,
+        remaining: Math.max(0, accountAllowance - accountConsumed),
+      },
+      users: userResult.rows.map((user) => {
+        const allowance = Number(user.monthly_allowance);
+        const consumed = Number(user.consumed);
+
+        return {
+          id: user.user_id,
+          name: user.user_name,
+          plan: {
+            id: user.plan_id,
+            name: user.plan_name,
+            monthlyAllowance: allowance,
+            maxUnitsPerRequest: Number(user.max_units_per_request),
+          },
+          consumed,
+          remaining: Math.max(0, allowance - consumed),
+        };
+      }),
+    });
+  } catch (error) {
+    next(error);
+  }
+});
 
 router.get("/", authenticateApiKey, async (req, res, next) => {
   const page = Number(req.query.page ?? 1);

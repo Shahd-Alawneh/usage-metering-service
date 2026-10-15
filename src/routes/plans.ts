@@ -14,6 +14,16 @@ const createPlanSchema = z.object({
   maxUnitsPerRequest: z.number().int().positive().safe(),
 });
 
+const updatePlanSchema = z
+  .object({
+    name: z.string().trim().min(2).max(100).optional(),
+    monthlyAllowance: z.number().int().nonnegative().safe().optional(),
+    maxUnitsPerRequest: z.number().int().positive().safe().optional(),
+  })
+  .refine((data) => Object.keys(data).length > 0, {
+    message: "At least one field must be provided",
+  });
+
 const assignPlanSchema = z.object({
   planId: z.string().uuid(),
 });
@@ -67,6 +77,54 @@ router.post("/", async (req, res, next) => {
     );
 
     res.status(201).json({ plan: result.rows[0] });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.patch("/:planId", async (req, res, next) => {
+  const planId = z.string().uuid().safeParse(req.params.planId);
+  const parsed = updatePlanSchema.safeParse(req.body);
+
+  if (!planId.success || !parsed.success) {
+    res.status(400).json({
+      error: "Invalid plan ID or plan data",
+      details: parsed.success ? undefined : parsed.error.issues,
+    });
+    return;
+  }
+
+  try {
+    const accountId = res.locals.accountId as string;
+    const { name, monthlyAllowance, maxUnitsPerRequest } = parsed.data;
+
+    const result = await pool.query(
+      `UPDATE plans
+       SET name = COALESCE($3, name),
+           monthly_allowance = COALESCE($4, monthly_allowance),
+           max_units_per_request = COALESCE($5, max_units_per_request)
+       WHERE id = $1
+         AND owner_account_id = $2
+         AND is_builtin = FALSE
+       RETURNING id, owner_account_id, scope, name,
+                 monthly_allowance, max_units_per_request, is_builtin`,
+      [
+        planId.data,
+        accountId,
+        name ?? null,
+        monthlyAllowance ?? null,
+        maxUnitsPerRequest ?? null,
+      ],
+    );
+
+    if (result.rowCount !== 1) {
+      res.status(404).json({
+        error: "Custom plan not found for this account",
+      });
+      return;
+    }
+
+    res.status(200).json({ plan: result.rows[0] });
   } catch (error) {
     next(error);
   }
