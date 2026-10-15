@@ -23,7 +23,17 @@ A TypeScript, Express, and PostgreSQL service for account-level and user-level u
 
 ## Configuration
 
-Create `.env` in the project root:
+
+Copy the example environment file to create your local configuration:
+
+```bash
+cp .env.example .env
+```
+
+Update `POSTGRES_PASSWORD` and the matching password in `DATABASE_URL` before starting the application.
+
+The `DATABASE_URL` in `.env` is used when running the API locally. Docker Compose automatically configures the database connection between containers.
+
 
 ```dotenv
 PORT=3000
