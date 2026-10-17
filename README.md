@@ -47,24 +47,15 @@ Do not commit `.env` or real API keys.
 
 ## Database setup
 
-Start PostgreSQL:
+Migrations run automatically when starting the API with `npm start` or Docker Compose.
 
-```bash
-docker compose up -d db
-```
+The migration runner applies SQL files in order, records completed migrations in `schema_migrations`, and skips previously applied files.
 
-Apply migrations in order against the local database. Each migration must be applied once and recorded in `schema_migrations`. If the database already contains the schema and migration records, do not reapply them.
+For a fresh installation, run:
 
-For a new database, apply:
+    docker compose up --build -d
 
-```bash
-for file in migrations/*.sql; do
-  docker compose exec -T db psql -v ON_ERROR_STOP=1 \
-    -U "$POSTGRES_USER" -d "$POSTGRES_DB" < "$file"
-done
-```
-
-The migration loop above requires `POSTGRES_USER` and `POSTGRES_DB` to be exported in the shell. Alternatively, run each SQL file individually with the appropriate database credentials.
+No manual SQL migration commands are required.
 
 ## Run locally
 
@@ -97,9 +88,11 @@ Open `http://localhost:3000`. Stop the stack with `docker compose down`. Persist
 | POST | `/users` | Create a user under the authenticated account |
 | GET | `/plans` | List built-in and account-owned plans |
 | POST | `/plans` | Create a custom plan |
+| PATCH | `/plans/:planId` | Update an account-owned custom plan |
 | PATCH | `/plans/account/current` | Change the account plan |
 | PATCH | `/plans/users/:userId/current` | Change a user's plan |
 | POST | `/usage` | Record an idempotent usage decision |
+| GET | `/usage/summary` | View account and user quota summaries |
 | GET | `/usage` | Paginated usage history |
 
 Authenticated routes use the `x-api-key` header.
